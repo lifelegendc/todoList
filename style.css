@@ -4,20 +4,26 @@
 :root {
     --primary-color: #667eea;
     --primary-hover: #5568d3;
+    --secondary-color: #764ba2;
     --danger-color: #ff6b6b;
     --danger-hover: #ff5252;
     --warning-color: #ffa726;
     --warning-hover: #fb8c00;
+    --success-color: #4caf50;
     --text-color: #333;
     --text-light: #999;
+    --text-lighter: #bbb;
     --bg-light: #f9f9f9;
     --bg-lighter: #f0f0f0;
+    --bg-white: #ffffff;
     --border-color: #ddd;
-    --border-radius: 5px;
+    --border-radius: 8px;
     --transition-speed: 0.3s;
     --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.15);
     --shadow-heavy: 0 10px 40px rgba(0, 0, 0, 0.2);
     --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-button: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 * {
@@ -37,7 +43,7 @@ body {
 }
 
 .container {
-    background: white;
+    background: var(--bg-white);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-heavy);
     max-width: 600px;
@@ -50,6 +56,10 @@ h1 {
     color: var(--text-color);
     margin-bottom: 30px;
     font-size: 28px;
+    background: var(--gradient-button);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .input-container {
@@ -60,32 +70,36 @@ h1 {
 
 #todoInput {
     flex: 1;
-    padding: 12px 15px;
+    padding: 14px 16px;
     border: 2px solid var(--border-color);
     border-radius: var(--border-radius);
     font-size: 16px;
-    transition: border-color var(--transition-speed);
+    transition: all var(--transition-speed);
+    box-shadow: var(--shadow-light);
 }
 
 #todoInput:focus {
     outline: none;
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
 }
 
 #addBtn {
-    padding: 12px 25px;
-    background: var(--primary-color);
+    padding: 14px 25px;
+    background: var(--gradient-button);
     color: white;
     border: none;
     border-radius: var(--border-radius);
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: background var(--transition-speed);
+    transition: all var(--transition-speed);
+    box-shadow: var(--shadow-light);
 }
 
 #addBtn:hover {
-    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
 }
 
 #addBtn:active {
@@ -100,33 +114,60 @@ h1 {
 .todo-item {
     display: flex;
     align-items: center;
-    padding: 15px;
+    padding: 16px 20px;
     background: var(--bg-light);
     border-radius: var(--border-radius);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     transition: all var(--transition-speed);
+    box-shadow: var(--shadow-light);
+    position: relative;
+    overflow: hidden;
 }
 
 .todo-item:hover {
     background: var(--bg-lighter);
-    box-shadow: var(--shadow-light);
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
 }
 
 .todo-item.completed {
-    opacity: 0.6;
+    opacity: 0.8;
+    background: rgba(76, 175, 80, 0.05);
 }
 
 .todo-item.completed .todo-text {
     text-decoration: line-through;
-    color: #999;
+    color: var(--text-light);
+}
+
+.todo-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 4px;
+    background: var(--primary-color);
+    transform: scaleY(0);
+    transition: transform var(--transition-speed);
+}
+
+.todo-item:hover::before {
+    transform: scaleY(1);
+}
+
+.todo-item.completed::before {
+    background: var(--success-color);
+    transform: scaleY(1);
 }
 
 .todo-checkbox {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     margin-right: 15px;
     cursor: pointer;
     accent-color: var(--primary-color);
+    border-radius: 4px;
 }
 
 .todo-text {
@@ -134,58 +175,96 @@ h1 {
     font-size: 16px;
     color: var(--text-color);
     word-break: break-word;
+    padding: 0 10px;
+}
+
+.edit-btn {
+    padding: 8px 14px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 8px;
+    transition: all var(--transition-speed);
+    box-shadow: var(--shadow-light);
+}
+
+.edit-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
 }
 
 .delete-btn {
-    padding: 6px 12px;
+    padding: 8px 14px;
     background: var(--danger-color);
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    transition: background var(--transition-speed);
+    transition: all var(--transition-speed);
+    box-shadow: var(--shadow-light);
 }
 
 .delete-btn:hover {
     background: var(--danger-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
 }
 
 .stats {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
+    padding: 18px 20px;
     background: var(--bg-lighter);
     border-radius: var(--border-radius);
     font-size: 14px;
-    color: #666;
+    color: var(--text-light);
+    box-shadow: var(--shadow-light);
 }
 
 .stats span {
     font-weight: bold;
+    color: var(--text-color);
 }
 
 .clear-btn {
-    padding: 6px 15px;
+    padding: 8px 16px;
     background: var(--warning-color);
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    transition: background var(--transition-speed);
+    transition: all var(--transition-speed);
+    box-shadow: var(--shadow-light);
 }
 
 .clear-btn:hover {
     background: var(--warning-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
 }
 
 .empty-state {
     text-align: center;
-    padding: 40px;
+    padding: 60px 20px;
     color: var(--text-light);
-    font-size: 16px;
+    font-size: 18px;
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
+    margin: 20px 0;
+}
+
+.empty-state::before {
+    content: '📋';
+    font-size: 48px;
+    display: block;
+    margin-bottom: 15px;
 }
 
 @media (max-width: 480px) {
@@ -208,10 +287,44 @@ h1 {
 
     .stats {
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
+        text-align: center;
     }
 
     .clear-btn {
         width: 100%;
+    }
+
+    .todo-item {
+        padding: 14px 16px;
+        flex-wrap: wrap;
+    }
+
+    .todo-text {
+        flex-basis: 100%;
+        margin: 10px 0;
+    }
+
+    .edit-btn, .delete-btn {
+        margin: 0 5px 0 0;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    .todo-item {
+        padding: 12px 14px;
+    }
+
+    .edit-btn, .delete-btn {
+        padding: 6px 10px;
+        font-size: 12px;
     }
 }

@@ -97,6 +97,18 @@ class TodoList {
     }
 
     /**
+     * 编辑待办事项
+     */
+    editTodo(id, newText) {
+        const todo = this.todos.find(t => t.id === id);
+        if (todo && newText.trim()) {
+            todo.text = newText.trim();
+            this.saveToStorage();
+            this.render();
+        }
+    }
+
+    /**
      * 清空已完成的待办事项
      */
     clearCompleted() {
@@ -108,6 +120,21 @@ class TodoList {
         }
 
         if (this.#confirm(`确定要删除 ${completed.length} 个已完成的待办事项吗?`)) {
+            this.todos = this.todos.filter(t => !t.completed);
+            this.saveToStorage();
+            this.render();
+        }
+    }
+
+    /**
+     * 更新统计信息
+     */
+    #updateStats(total, completed) {
+        const { totalCount, completedCount } = this.#elements;
+        totalCount.textContent = `总数: ${total}`;
+        completedCount.textContent = `已完成: ${completed}`;
+    }
+
     /**
      * 渲染DOM
      */
@@ -146,16 +173,31 @@ class TodoList {
                 aria-label="完成待办事项"
             >
             <span class="todo-text">${this.#escapeHtml(todo.text)}</span>
+            <button class="edit-btn" data-id="${todo.id}" aria-label="编辑待办事项">编辑</button>
             <button class="delete-btn" data-id="${todo.id}" aria-label="删除待办事项">删除</button>
         `;
 
         const checkbox = li.querySelector('.todo-checkbox');
+        const editBtn = li.querySelector('.edit-btn');
         const deleteBtn = li.querySelector('.delete-btn');
         
         checkbox.addEventListener('change', () => this.toggleTodo(todo.id));
+        editBtn.addEventListener('click', () => this.#handleEdit(todo.id, todo.text));
         deleteBtn.addEventListener('click', () => this.deleteTodo(todo.id));
 
         return li;
+    }
+
+    /**
+     * 处理编辑操作
+     */
+    #handleEdit(id, currentText) {
+        const newText = prompt('编辑待办事项:', currentText);
+        if (newText !== null) {
+            this.editTodo(id, newText);
+        }
+    }
+
     /**
      * 保存到localStorage
      */
@@ -175,12 +217,11 @@ class TodoList {
         try {
             const data = localStorage.getItem(this.storageKey);
             return data ? JSON.parse(data) : [];
-/**
- * 应用入口 - 页面加载完成后初始化应用
- */
-document.addEventListener('DOMContentLoaded', () => {
-    new TodoList();
-});     }
+        } catch (error) {
+            console.error('存储加载失败:', error);
+            this.#showNotification('数据加载失败');
+            return [];
+        }
     }
 
     /**
@@ -209,23 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     #confirm(message) {
         return confirm(message);
-    }
-}   // 保存到 localStorage
-    saveToStorage() {
-        localStorage.setItem(this.storageKey, JSON.stringify(this.todos));
-    }
-
-    // 从 localStorage 加载
-    loadFromStorage() {
-        const data = localStorage.getItem(this.storageKey);
-        return data ? JSON.parse(data) : [];
-    }
-
-    // HTML 转义 - 防止 XSS
-    escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
     }
 }
 
